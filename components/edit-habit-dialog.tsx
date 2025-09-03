@@ -1,7 +1,6 @@
 "use client";
 
-import type React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -56,16 +55,6 @@ export function EditHabitDialog({
 
 	const { updateHabit } = useHabits();
 
-	// 🔑 Reset form each time the dialog opens with fresh habit data
-	useEffect(() => {
-		if (open) {
-			setName(habit.name);
-			setDescription(habit.description || "");
-			setCategory(habit.category);
-			setFrequency(habit.frequency);
-		}
-	}, [open, habit]);
-
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!name.trim()) return;
@@ -78,8 +67,7 @@ export function EditHabitDialog({
 				category,
 				frequency,
 			});
-			// ✅ close immediately after update succeeds
-			onOpenChange(false);
+			onOpenChange(false); // ✅ close AFTER update
 		} catch (error) {
 			console.error("Failed to update habit:", error);
 		} finally {
@@ -99,11 +87,11 @@ export function EditHabitDialog({
 
 				<form onSubmit={handleSubmit}>
 					<div className="grid gap-4 py-4">
+						{/* Name */}
 						<div className="space-y-2">
 							<Label htmlFor="name">Habit Name *</Label>
 							<Input
 								id="name"
-								placeholder="e.g., Exercise for 30 minutes"
 								value={name}
 								onChange={(e) => setName(e.target.value)}
 								required
@@ -111,18 +99,19 @@ export function EditHabitDialog({
 							/>
 						</div>
 
+						{/* Description */}
 						<div className="space-y-2">
 							<Label htmlFor="description">Description</Label>
 							<Textarea
 								id="description"
-								placeholder="Optional: Add more details about your habit"
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
-								disabled={isLoading}
 								rows={3}
+								disabled={isLoading}
 							/>
 						</div>
 
+						{/* Category */}
 						<div className="space-y-2">
 							<Label htmlFor="category">Category *</Label>
 							<Select
@@ -143,13 +132,12 @@ export function EditHabitDialog({
 							</Select>
 						</div>
 
+						{/* Frequency */}
 						<div className="space-y-2">
 							<Label htmlFor="frequency">Frequency *</Label>
 							<Select
 								value={frequency}
-								onValueChange={(value: "daily" | "weekly") =>
-									setFrequency(value)
-								}
+								onValueChange={(val: "daily" | "weekly") => setFrequency(val)}
 								disabled={isLoading}
 							>
 								<SelectTrigger>

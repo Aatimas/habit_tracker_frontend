@@ -48,7 +48,7 @@ export function HabitCard({ habit }: HabitCardProps) {
 		// then delete in background
 		await deleteHabit(habit.id);
 	};
-
+const [editOpen, setEditOpen] = useState(false);
 	return (
 		<>
 			<Card className="transition-all hover:shadow-md">
@@ -143,14 +143,19 @@ export function HabitCard({ habit }: HabitCardProps) {
 					</div>
 				</CardContent>
 			</Card>
-
 			{/* Edit Habit Modal */}
+			
+			<EditHabitDialog
+				habit={habit}
+				open={editOpen}
+				onOpenChange={setEditOpen}
+			/>
+	
 			<EditHabitDialog
 				habit={habit}
 				open={showEditDialog}
 				onOpenChange={setShowEditDialog}
 			/>
-
 			{/* Delete Confirmation */}
 			<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
 				<AlertDialogContent>
