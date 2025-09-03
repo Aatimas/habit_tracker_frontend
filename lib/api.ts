@@ -37,6 +37,9 @@ export const api = {
       const errorData = await response.json().catch(() => ({ message: "An error occurred" }))
       throw new ApiError(response.status, errorData.message || "Request failed")
     }
+    if (response.status === 204) {
+			return {} as T;
+		}
 
     return response.json()
   },
