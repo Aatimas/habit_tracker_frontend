@@ -13,6 +13,7 @@
   --primary: oklch(0.65 0.18 45); /* #ea580c - Vibrant orange primary */
   --primary-foreground: oklch(1 0 0); /* #ffffff - Text on primary */
   --secondary: oklch(0.7 0.16 40); /* #f97316 - Lighter orange secondary */
+  --secondary-progress:  oklch(86.423% 0.05111 41.013); 
   --secondary-foreground: oklch(1 0 0); /* #ffffff - Text on secondary */
   --muted: oklch(0.97 0.02 85); /* #fef3c7 - Muted background */
   --muted-foreground: oklch(0.35 0 0); /* #4b5563 - Muted text */
@@ -47,8 +48,9 @@
   --popover: oklch(0.12 0 0); /* Dark popover */
   --popover-foreground: oklch(0.95 0 0); /* Light popover text */
   --primary: oklch(0.7 0.16 40); /* Brighter orange in dark mode */
-  --primary-foreground: oklch(0.12 0 0); /* Dark text on primary */
+  --primary-foreground: oklch(100% 0.00011 271.152); /* Dark text on primary */
   --secondary: oklch(0.25 0 0); /* Dark secondary */
+  --secondary-progress: oklch(0.25 0 0); /* Dark secondary 2 */
   --secondary-foreground: oklch(0.95 0 0); /* Light text on secondary */
   --muted: oklch(0.25 0 0); /* Dark muted background */
   --muted-foreground: oklch(0.7 0 0); /* Muted text in dark mode */
@@ -86,6 +88,7 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
+  --color-secondary-progress: var(--secondary-progress);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);

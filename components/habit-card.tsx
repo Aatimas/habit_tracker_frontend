@@ -22,19 +22,27 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Check, MoreHorizontal, Edit, Trash2, Calendar } from "lucide-react";
+import {
+	Check,
+	MoreHorizontal,
+	Edit,
+	Trash2,
+	Calendar,
+	MoreVertical,
+} from "lucide-react";
 import { useHabits, type Habit } from "@/contexts/habits-context";
 import { EditHabitDialog } from "@/components/edit-habit-dialog";
 import { cn } from "@/lib/utils";
 
 interface HabitCardProps {
-	habit: Habit;
+	habit: any;
 }
 
 export function HabitCard({ habit }: HabitCardProps) {
+	const { toggleHabitCompletion, deleteHabit, getHabitProgress } = useHabits();
+	const [menuOpen, setMenuOpen] = useState(false);
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 	const [showEditDialog, setShowEditDialog] = useState(false);
-	const { toggleHabitCompletion, deleteHabit, getHabitProgress } = useHabits();
 
 	const progress = getHabitProgress(habit.id);
 
@@ -42,13 +50,13 @@ export function HabitCard({ habit }: HabitCardProps) {
 		toggleHabitCompletion(habit.id);
 	};
 
-	const handleDelete = async () => {
-		// close immediately → unmount overlay/focus trap
-		setShowDeleteDialog(false);
-		// then delete in background
-		await deleteHabit(habit.id);
+	const handleDelete = async (id: string) => {
+		try {
+			await deleteHabit(id);
+		} catch (err) {
+			console.error("Failed to delete habit:", err);
+		}
 	};
-const [editOpen, setEditOpen] = useState(false);
 	return (
 		<>
 			<Card className="transition-all hover:shadow-md">
@@ -102,32 +110,28 @@ const [editOpen, setEditOpen] = useState(false);
 							</div>
 						</div>
 
-						<DropdownMenu>
+						<DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
 							<DropdownMenuTrigger asChild>
-								<Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-									<MoreHorizontal className="h-4 w-4" />
-									<span className="sr-only">Open menu</span>
+								<Button variant="ghost" size="icon">
+									<MoreVertical className="h-4 w-4" />
 								</Button>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end">
 								<DropdownMenuItem
 									onClick={() => {
+										setMenuOpen(false);
 										setShowEditDialog(true);
-										setShowDeleteDialog(false); // prevent overlap
 									}}
 								>
-									<Edit className="mr-2 h-4 w-4" />
 									Edit habit
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem
-									className="text-destructive focus:text-destructive"
 									onClick={() => {
+										setMenuOpen(false);
 										setShowDeleteDialog(true);
-										setShowEditDialog(false); // prevent overlap
 									}}
 								>
-									<Trash2 className="mr-2 h-4 w-4" />
 									Delete habit
 								</DropdownMenuItem>
 							</DropdownMenuContent>
@@ -143,18 +147,11 @@ const [editOpen, setEditOpen] = useState(false);
 					</div>
 				</CardContent>
 			</Card>
-			{/* Edit Habit Modal */}
-			
+			{/* Edit Habit Dialog */}
 			<EditHabitDialog
-				habit={habit}
-				open={editOpen}
-				onOpenChange={setEditOpen}
-			/>
-	
-			<EditHabitDialog
-				habit={habit}
 				open={showEditDialog}
 				onOpenChange={setShowEditDialog}
+				habit={habit}
 			/>
 			{/* Delete Confirmation */}
 			<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
@@ -168,12 +165,16 @@ const [editOpen, setEditOpen] = useState(false);
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							onClick={handleDelete}
-							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+
+						<Button
+							variant="destructive"
+							onClick={async () => {
+								await handleDelete(habit.id);
+								setShowDeleteDialog(false);
+							}}
 						>
-							Delete Habit
-						</AlertDialogAction>
+							Delete
+						</Button>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
