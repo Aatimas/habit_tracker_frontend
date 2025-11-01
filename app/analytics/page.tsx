@@ -44,19 +44,36 @@ export default function AnalyticsPage() {
   const totalHabits = habits.length
   const activeStreaks = habits.filter((h) => h.streak > 0).length
   const longestStreak = Math.max(...habits.map((h) => h.longestStreak), 0)
-  const avgCompletionRate =
-    habits.length > 0
-      ? Math.round(
-          habits.reduce((acc, habit) => {
-            const completedDays = habit.completedDates.length
-            const daysSinceCreated = Math.max(
-              1,
-              Math.ceil((Date.now() - new Date(habit.createdAt).getTime()) / (1000 * 60 * 60 * 24)),
-            )
-            return acc + (completedDays / daysSinceCreated) * 100
-          }, 0) / habits.length,
-        )
-      : 0
+const activeHabits = habits.filter(
+	(habit) => habit.completedDates.length > 0 || habit.streak > 0
+);
+
+const totalStats = activeHabits.reduce(
+	(acc, habit) => {
+		const createdAt = new Date(habit.createdAt);
+		const daysSinceCreated = Math.max(
+			1,
+			Math.ceil((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24))
+		);
+
+		// Use a Set to ensure each completed day is counted once
+		const completedDays = new Set(habit.completedDates).size;
+
+		// Cap at possible days to prevent >100%
+		acc.totalCompleted += Math.min(completedDays, daysSinceCreated);
+		acc.totalPossible += daysSinceCreated;
+
+		return acc;
+	},
+	{ totalCompleted: 0, totalPossible: 0 }
+);
+
+const avgCompletionRate =
+	totalStats.totalPossible > 0
+		? Math.round((totalStats.totalCompleted / totalStats.totalPossible) * 100)
+		: 0;
+
+console.log(avgCompletionRate);
 
   return (
     <div className="min-h-screen bg-background">
