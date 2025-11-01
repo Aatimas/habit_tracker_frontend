@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/auth-context"
 import { HabitsProvider } from "@/contexts/habits-context"
 import { Suspense } from "react"
 import { Navigation } from "@/components/navigation"
+import Footer  from "@/components/footer"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -34,7 +35,7 @@ export default function RootLayout({
             </AuthProvider>
           </ThemeProvider>
         </Suspense>
-        {/* <Analytics /> */}
+        <Footer />
       </body>
     </html>
   )

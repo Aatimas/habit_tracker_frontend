@@ -331,7 +331,7 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
 		try {
 			const newHabit = await api.habits.create(habitData);
       setHabits((prev) => [...prev, transformHabit(newHabit)]);
-      await refreshHabits();
+    //   await refreshHabits();
 		} catch (error) {
 			if (error instanceof ApiError) {
 				setError(error.message);
@@ -376,12 +376,58 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
 		}
 	};
 
+	// const toggleHabitCompletion = async (id: string, date?: string) => {
+	// 	setError(null);
+	// 	try {
+	// 		await api.habits.checkIn(id, date);
+	// 		// Refresh habits to get updated data from server
+	// 		await refreshHabits();
+	// 	} catch (error) {
+	// 		if (error instanceof ApiError) {
+	// 			setError(error.message);
+	// 		} else {
+	// 			setError("Failed to update habit completion");
+	// 		}
+	// 		throw error;
+	// 	}
+	// };
+	
 	const toggleHabitCompletion = async (id: string, date?: string) => {
 		setError(null);
 		try {
-			await api.habits.checkin(id, date);
-			// Refresh habits to get updated data from server
-			await refreshHabits();
+			const updated = await api.habits.checkIn(id, date);
+
+			// Optimistically update just the toggled habit locally
+			setHabits((prev) =>
+				prev.map((habit) => {
+					if (habit.id !== id) return habit;
+
+					// You can either rely on backend response `updated`, or toggle locally:
+					const completedToday = !habit.completedToday;
+
+					let completedDates = [...habit.completedDates];
+					const todayISO = new Date().toISOString().split("T")[0];
+
+					if (completedToday) {
+						// Add today's date if not already there
+						if (!completedDates.includes(todayISO)) {
+							completedDates.push(todayISO);
+						}
+					} else {
+						// Remove today's date if unchecking
+						completedDates = completedDates.filter((d) => d !== todayISO);
+					}
+
+					return {
+						...habit,
+						completedToday,
+						completedDates,
+						streak: updated?.streak ?? habit.streak,
+						longestStreak: updated?.longestStreak ?? habit.longestStreak,
+						updatedAt: new Date().toISOString(),
+					};
+				})
+			);
 		} catch (error) {
 			if (error instanceof ApiError) {
 				setError(error.message);
@@ -391,6 +437,7 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
 			throw error;
 		}
 	};
+
 
 	const getHabitRecords = async (id: string, from?: string, to?: string) => {
 		setError(null);

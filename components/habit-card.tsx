@@ -127,6 +127,7 @@ export function HabitCard({ habit }: HabitCardProps) {
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem
+									className="text-destructive focus:text-destructive focus:bg-destructive/10"
 									onClick={() => {
 										setMenuOpen(false);
 										setShowDeleteDialog(true);

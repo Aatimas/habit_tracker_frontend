@@ -76,8 +76,8 @@ export const api = {
       api.request<void>(`/habits/${id}`, {
         method: "DELETE",
       }),
-    checkin: (id: string, date?: string) =>
-      api.request<any>(`/habits/${id}/checkin`, {
+    checkIn: (id: string, date?: string) =>
+      api.request<any>(`/habits/${id}/checkIn`, {
         method: "POST",
         body: JSON.stringify({ date }),
       }),
