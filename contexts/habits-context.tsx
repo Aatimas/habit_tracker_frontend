@@ -185,22 +185,7 @@ const refreshHabits = async () => {
 		}
 	};
 
-	// const toggleHabitCompletion = async (id: string, date?: string) => {
-	// 	setError(null);
-	// 	try {
-	// 		await api.habits.checkIn(id, date);
-	// 		// Refresh habits to get updated data from server
-	// 		await refreshHabits();
-	// 	} catch (error) {
-	// 		if (error instanceof ApiError) {
-	// 			setError(error.message);
-	// 		} else {
-	// 			setError("Failed to update habit completion");
-	// 		}
-	// 		throw error;
-	// 	}
-	// };
-	
+
 	const toggleHabitCompletion = async (id: string, date?: string) => {
 		setError(null);
 		try {
@@ -211,11 +196,11 @@ const refreshHabits = async () => {
 				prev.map((habit) => {
 					if (habit.id !== id) return habit;
 
-					// You can either rely on backend response `updated`, or toggle locally:
+				
 					const completedToday = !habit.completedToday;
 
 					let completedDates = [...habit.completedDates];
-					const todayISO = toLocalISO();
+					const todayISO = toLocalISO(); // Get today's date in local ISO format
 
 					if (completedToday) {
 						// Add today's date if not already there
